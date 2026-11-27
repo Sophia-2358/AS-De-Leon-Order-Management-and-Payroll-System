@@ -140,6 +140,47 @@ export const setLabor = async (id, percentage) => {
     if (isNaN(pct) || pct < 0 || pct > 100) throw fail(400, 'Labor percentage must be between 0 and 100.');
     await orderModel.setLaborPercentage(id, pct);
 };
+// ==========================================
+// ADD ITEM (measuring stage — no price yet)
+// ==========================================
+// WBS 1.1.6 - Validate and insert a new measurement item for the order
+export const addItem = async (order_id, data) => {
+    const order = await orderModel.findById(order_id);
+    if (!order) throw fail(404, 'Order not found.');
+    if (!['approved','measuring','canvassing'].includes(order.status))
+        throw fail(400, 'Items can only be added during measuring or canvassing.');
+    const { product, width, height, unit, quantity, material, color, notes } = data;
+    if (!product || !width || !height) throw fail(400, 'product, width, and height are required.');
+    if (Number(width) <= 0 || Number(height) <= 0) throw fail(400, 'Width and height must be greater than 0.');
+    if (Number(quantity) <= 0) throw fail(400, 'Quantity must be greater than 0.');
+    const insertId = await itemModel.insert({
+        order_id, product, width, height, unit, quantity, material, color, notes,
+        price: 0  // price starts at 0, set during canvassing
+    });
+    await orderModel.recalcTotals(order_id);
+    return insertId;
+};
+
+// ==========================================
+// EDIT ITEM (dimensions/details)
+// ==========================================
+// WBS 1.1.6 - Validate and update an existing measurement item's details
+export const editItem = async (item_id, order_id, data) => {
+    const order = await orderModel.findById(order_id);
+    if (!order) throw fail(404, 'Order not found.');
+    if (!['approved','measuring','canvassing'].includes(order.status))
+        throw fail(400, 'Items can only be edited during measuring or canvassing.');
+    const { product, width, height, unit, quantity, material, color, notes, price } = data;
+    if (!product || !width || !height) throw fail(400, 'product, width, and height are required.');
+    if (Number(width) <= 0 || Number(height) <= 0) throw fail(400, 'Width and height must be greater than 0.');
+    if (Number(quantity) <= 0) throw fail(400, 'Quantity must be greater than 0.');
+    await itemModel.update({
+        id: item_id, product, width, height, unit, quantity,
+        material, color, notes,
+        price: price ?? 0
+    });
+    await orderModel.recalcTotals(order_id);
+};
 
 // ==========================================
 // SET ITEM PRICE (canvassing stage)
@@ -153,5 +194,17 @@ export const setItemPrice = async (item_id, order_id, price) => {
     const p = Number(price);
     if (isNaN(p) || p < 0) throw fail(400, 'Price must be 0 or greater.');
     await itemModel.updatePrice(item_id, p);
+    await orderModel.recalcTotals(order_id);
+};
+// ==========================================
+// DELETE ITEM
+// ==========================================
+// WBS 1.1.6 - Remove a measurement item from the order and recalculate totals
+export const deleteItem = async (item_id, order_id) => {
+    const order = await orderModel.findById(order_id);
+    if (!order) throw fail(404, 'Order not found.');
+    if (!['approved','measuring','canvassing'].includes(order.status))
+        throw fail(400, 'Items can only be deleted during measuring or canvassing.');
+    await itemModel.remove(item_id);
     await orderModel.recalcTotals(order_id);
 };
