@@ -8,7 +8,6 @@ export const generateReport = async (date_from, date_to, product) => {
 
     // WBS 1.2.1 - Retrieve completed orders within the specified date range and product filter
     const orders      = await orderModel.fetchForReport(date_from, date_to, product || null);
-};
 
 // WBS 1.2.2 - Aggregate total sales, order count, and average order value
     const total_sales = orders.reduce((sum, o) => sum + Number(o.total_amount), 0);
@@ -33,4 +32,15 @@ export const generateReport = async (date_from, date_to, product) => {
         // WBS 1.2.3 - Return months sorted chronologically for the bar chart
         monthly: Object.values(byMonth).sort((a, b) => a.month.localeCompare(b.month)),
 
+        
+        // WBS 1.2.4 - Return the flattened order list for the report table
+        orders: orders.map(o => ({
+            id:            o.id,
+            order_no:      o.order_no,
+            customer_name: o.customer_name,
+            product:       o.product,
+            total_amount:  Number(o.total_amount),
+            created_at:    o.created_at
+        }))
     }   
+};

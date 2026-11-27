@@ -33,3 +33,13 @@
 .sr-page .sr-tooltip { position: absolute; background: #17202d; color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 12px; display: flex; flex-direction: column; gap: 3px; z-index: 100; pointer-events: none; transform: translate(-50%, -100%); white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
 .sr-page .sr-tooltip strong { font-size: 13px; margin-bottom: 2px; }
 .sr-page .sr-chart-empty { padding: 40px 0; color: #5b6577; text-align: center; }
+/* ── Orders table and report totals ─────────────────────────
+   WBS 1.2.4 - Orders included in the report with total row    */
+.sr-page .sr-table-wrap { overflow-x: auto; }
+.sr-page .sr-table { width: 100%; border-collapse: collapse; }
+.sr-page .sr-table thead th { padding: 10px; font-weight: bold; text-align: left; color: #5b6577; border-bottom: 1px solid #dde2ec; }
+.sr-page .sr-table tbody td { padding: 10px; border-bottom: 1px solid #dde2ec; }
+.sr-page .sr-table tbody tr:hover { background: #f1f3fb; }
+.sr-page .sr-table tfoot td { padding: 10px; font-weight: bold; }
+.sr-page .sr-table .num { text-align: right; }
+.sr-page .sr-table td.sr-empty { text-align: center; color: #5b6577; }
