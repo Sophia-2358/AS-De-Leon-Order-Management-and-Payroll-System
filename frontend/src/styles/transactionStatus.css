@@ -66,3 +66,10 @@
 .ts-page .ts-msg { min-height: 20px; margin-top: 8px; font-size: .88rem; }
 .ts-page .ts-msg.ok    { color: #1d5e33; }
 .ts-page .ts-msg.error { color: #9b1c1c; }
+
+/* ── Payment recording form ──────────────────────────────────
+   WBS 1.1.4 - Form to record an amount received               */
+.ts-page .ts-pay-form { display: grid; gap: 8px; margin-bottom: 15px; padding: 12px; border-radius: 5px; border: 1px solid #dde2ec; background: #fafbfd; }
+.ts-page .ts-pay-form label { margin: 0; font-weight: bold; }
+.ts-page .ts-pay-form input { padding: 8px 10px; border-radius: 5px; border: 1px solid #dde2ec; }
+.ts-page .ts-pay-btns { display: flex; gap: 8px; }

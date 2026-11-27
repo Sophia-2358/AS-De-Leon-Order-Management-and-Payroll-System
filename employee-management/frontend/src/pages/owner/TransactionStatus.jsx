@@ -83,6 +83,17 @@ export default function TransactionStatus() {
             await selectOrder(selected.id); loadOrders()
         } catch (err) { setMsg({ text: err.message, ok: false }) }
     }
+    // WBS 1.1.4 - Submit the payment amount and record it against the selected order
+    async function handleRecordPayment(e) {
+        e.preventDefault()
+        try {
+            await api(`/api/orders/${selected.id}/payment`, { method: 'POST', body: { amount: Number(payAmt) } })
+            setMsg({ text: 'Payment recorded.', ok: true })
+            setPayAmt(''); setShowPayForm(false)
+            await selectOrder(selected.id); loadOrders()
+        } catch (err) { setMsg({ text: err.message, ok: false }) }
+    }
+
       // WBS 1.1.3 - Save the installation date for the selected order
     async function handleInstallDateSave() {
         try {

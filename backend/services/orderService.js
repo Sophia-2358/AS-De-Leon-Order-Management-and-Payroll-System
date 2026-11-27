@@ -104,6 +104,21 @@ export const updateOrderStatus = async (id) => {
     await orderModel.updateStatus(id, next);
     return next;
 };
+// ==========================================
+// RECORD PAYMENT
+// ==========================================
+// WBS 1.1.4 - Validate and record a payment, enforcing balance limits
+export const recordPayment = async (id, amount) => {
+    const order = await orderModel.findById(id);
+    if (!order) throw fail(404, 'Order not found.');
+    if (['for_approval','declined'].includes(order.status)) throw fail(400, 'Cannot record payment for this order.');
+    const amt = Number(amount);
+    if (!amt || amt <= 0) throw fail(400, 'Amount must be greater than 0.');
+    const balance = Number(order.total_amount) - Number(order.amount_paid);
+    if (amt > balance) throw fail(400, `Amount exceeds the balance of ₱${balance.toFixed(2)}.`);
+    await orderModel.recordPayment(id, amt);
+};
+
 // WBS 1.1.3 - Set the installation date for an order that is ready or completed
 export const setInstallDate = async (id, install_date) => {
     const order = await orderModel.findById(id);

@@ -82,3 +82,23 @@ export const updateStatus = async (id, status, decline_reason = null) => {
     );
     return result.affectedRows;
 };
+
+// WBS 1.1.4 - Insert a payment record and recompute amount_paid and payment_status
+export const recordPayment = async (id, amount) => {
+    await pool.query(
+        `INSERT INTO order_payments (order_id, amount) VALUES (?, ?)`,
+        [id, amount]
+    );
+    await pool.query(
+        `UPDATE orders o
+         SET
+            amount_paid    = (SELECT COALESCE(SUM(p.amount),0) FROM order_payments p WHERE p.order_id = o.id),
+            payment_status = CASE
+                WHEN (SELECT COALESCE(SUM(p.amount),0) FROM order_payments p WHERE p.order_id = o.id) <= 0 THEN 'unpaid'
+                WHEN (SELECT COALESCE(SUM(p.amount),0) FROM order_payments p WHERE p.order_id = o.id) >= o.total_amount THEN 'paid'
+                ELSE 'partial'
+            END
+         WHERE o.id = ?`,
+        [id]
+    );
+};

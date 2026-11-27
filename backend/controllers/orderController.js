@@ -54,6 +54,11 @@ export const nextStatus    = async (req, res) => {
         return res.status(200).json({ success: true, message: `Status updated to ${next}.`, status: next });
     } catch (e) { return sendError(res, 'Update Status', e, 'Could not update status.'); }
 };
+// WBS 1.1.4 - Record a payment against an order and update payment status
+export const recordPayment = async (req, res) => {
+    try { await orderService.recordPayment(Number(req.params.id), req.body.amount); return res.status(201).json({ success: true, message: 'Payment recorded.' }); }
+    catch (e) { return sendError(res, 'Record Payment', e, 'Could not record payment.'); }
+};
 // WBS 1.1.3 - Set the installation date for a ready or completed order
 export const setInstallDate = async (req, res) => {
     try {
