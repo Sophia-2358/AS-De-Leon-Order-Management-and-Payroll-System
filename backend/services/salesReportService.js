@@ -14,6 +14,13 @@ export const generateReport = async (date_from, date_to, product) => {
     const total_sales = orders.reduce((sum, o) => sum + Number(o.total_amount), 0);
     const order_count = orders.length;
     const avg_order   = order_count > 0 ? total_sales / order_count : 0;
+    // WBS 1.2.3 - Accumulate totals and counts per calendar month
+    const byMonth = {};
+    for (const o of orders) {
+        if (!byMonth[o.month_key]) byMonth[o.month_key] = { month: o.month_key, total: 0, count: 0 };
+        byMonth[o.month_key].total += Number(o.total_amount);
+        byMonth[o.month_key].count += 1;
+    }
  
 
     return {
@@ -23,5 +30,7 @@ export const generateReport = async (date_from, date_to, product) => {
             order_count,
             avg_order:    parseFloat(avg_order.toFixed(2))
         },
+        // WBS 1.2.3 - Return months sorted chronologically for the bar chart
+        monthly: Object.values(byMonth).sort((a, b) => a.month.localeCompare(b.month)),
 
     }   

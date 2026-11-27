@@ -11,3 +11,25 @@
 .sr-page .sr-card { padding: 20px; border-radius: 10px; border: 1px solid #dde2ec; box-shadow: 2px 2px 8px rgba(8,8,8,.15); background: #fff; }
 .sr-page .sr-card-label { color: #5b6577; }
 .sr-page .sr-card-value { display: block; margin-top: 10px; font-size: 2rem; font-weight: bold; color: #17202d; }
+/* ── Detail section layout ───────────────────────────────────
+   WBS 1.2.3 - Side-by-side bar chart and orders table */
+.sr-page .sr-detail { display: grid; grid-template-columns: repeat(12,1fr); gap: 15px; align-items: start; }
+.sr-page .sr-detail-card { padding: 20px; border-radius: 10px; border: 1px solid #dde2ec; box-shadow: 2px 2px 8px rgba(8,8,8,.15); background: #fff; }
+.sr-page .sr-detail-card h2 { margin-bottom: 15px; font-size: 1.1rem; font-weight: bold; color: #17202d; }
+
+/* ── Sales by month bar chart ────────────────────────────────
+   WBS 1.2.3 - Bar chart with Y-axis, gridlines, and tooltip   */
+.sr-page .sr-chart-wrap { display: flex; gap: 8px; align-items: stretch; }
+.sr-page .sr-y-axis { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; min-width: 52px; padding-bottom: 24px; }
+.sr-page .sr-y-tick { font-size: 10px; color: #8692a8; white-space: nowrap; }
+.sr-page .sr-chart-area { flex: 1; display: flex; flex-direction: column; position: relative; min-height: 240px; }
+.sr-page .sr-gridlines { position: absolute; top: 0; left: 0; right: 0; bottom: 24px; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+.sr-page .sr-gridline { width: 100%; height: 1px; background: #edf0f7; }
+.sr-page .sr-bars { flex: 1; display: flex; align-items: flex-end; gap: 10px; padding-bottom: 24px; border-bottom: 2px solid #dde2ec; position: relative; z-index: 1; }
+.sr-page .sr-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 200px; cursor: pointer; position: relative; }
+.sr-page .sr-bar-inner { width: 100%; max-width: 48px; background: #2830c0; border-radius: 4px 4px 0 0; transition: background .15s; min-height: 4px; }
+.sr-page .sr-bar-col:hover .sr-bar-inner { background: #1a1f8a; }
+.sr-page .sr-bar-month { position: absolute; bottom: -22px; font-size: 10px; color: #5b6577; white-space: nowrap; text-align: center; }
+.sr-page .sr-tooltip { position: absolute; background: #17202d; color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 12px; display: flex; flex-direction: column; gap: 3px; z-index: 100; pointer-events: none; transform: translate(-50%, -100%); white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
+.sr-page .sr-tooltip strong { font-size: 13px; margin-bottom: 2px; }
+.sr-page .sr-chart-empty { padding: 40px 0; color: #5b6577; text-align: center; }

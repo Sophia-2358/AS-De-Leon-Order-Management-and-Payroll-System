@@ -72,6 +72,8 @@ export default function SalesReport() {
                 />
                  {/* WBS 1.2.2 - Summary cards: total sales, order count, average order value */}
                 <SrSummaryCards summary={result?.summary ?? null} />
+                {/* WBS 1.2.3 - Monthly sales bar chart */}
+                    <SrBarChart monthly={result?.monthly ?? []} />
 
                 </div>
             </div>
