@@ -104,6 +104,25 @@ export default function TransactionStatus() {
         } catch (err) { setMsg({ text: err.message, ok: false }) }
     }
 
+    // WBS 1.1.5 - Save the labor percentage input and trigger total recomputation
+    async function handleLaborSave() {
+        try {
+            await api(`/api/orders/${selected.id}/labor`, { method: 'POST', body: { percentage: Number(laborInput) } })
+            setMsg({ text: `Labor set to ${laborInput}%.`, ok: true })
+            await selectOrder(selected.id)
+        } catch (err) { setMsg({ text: err.message, ok: false }) }
+    }
+
+    // WBS 1.1.5 - Save a canvassed price for a specific measurement item
+    async function handlePriceSave(item_id, price) {
+        try {
+            await api(`/api/orders/${selected.id}/items/${item_id}/price`, {
+                method: 'PUT', body: { price: Number(price) }
+            })
+            await selectOrder(selected.id)
+        } catch (err) { setMsg({ text: err.message, ok: false }) }
+    }
+
 
     return (
     <OwnerLayout active="transaction-status">
@@ -158,7 +177,6 @@ export default function TransactionStatus() {
                 </div>
             </div>
                             
-
         </OwnerLayout>
     )
 }

@@ -1,3 +1,8 @@
+// WBS 1.1.5 - Format a number as Philippine Peso currency
+function peso(n) {
+    return '₱' + Number(n || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
 const STEPS = [
     'for_approval','approved','measuring','canvassing',
     'for_payment_materials','fabrication','quality_check','ready','completed'
@@ -33,6 +38,18 @@ export default function TsOrderDetails({
     const isForApproval = order.status === 'for_approval'
     const isApproved    = !['for_approval','declined','completed'].includes(order.status)
 }
+// WBS 1.1.5 - Derive payment figures and remaining balance from the order data
+    const materialTotal = Number(order.material_total  ?? 0)
+    const laborAmount   = Number(order.labor_amount    ?? 0)
+    const totalAmount   = Number(order.total_amount    ?? 0)
+    const amountPaid    = Number(order.amount_paid     ?? 0)
+    const balance       = totalAmount - amountPaid
+
+    const showLabor     = ['canvassing','for_payment_materials','fabrication','quality_check','ready','completed'].includes(order.status)
+    const canSetLabor   = ['canvassing','for_payment_materials'].includes(order.status)
+    const canPay        = ['for_payment_materials','fabrication','quality_check','ready'].includes(order.status)
+    const canSetInstall = ['ready','completed'].includes(order.status)
+
 return (
         <div>
             {/* WBS 1.1.3 - Display active order count and capacity bar */}
@@ -71,6 +88,63 @@ return (
                     )
                 })}
             </div>
+            {/* WBS 1.1.5 - Labor percentage input and computed labor amount display */}
+            {showLabor && (
+                <div className="ts-labor-box">
+                    <div className="ts-labor-header">
+                        <span>Labor</span>
+                        {order.labor_percentage != null && (
+                            <strong>{Number(order.labor_percentage)}%</strong>
+                        )}
+                    </div>
+                    {canSetLabor && (
+                        <div className="ts-labor-row">
+                            <input
+                                type="number" min="0" max="100" step="0.1"
+                                placeholder="Enter %"
+                                value={laborInput}
+                                onChange={e => onLaborChange(e.target.value)}
+                                style={{ width: 80, padding: '6px 8px', border: '1px solid #dde2ec', borderRadius: 5, fontSize: 13 }}
+                            />
+                            <span style={{ fontSize: 13, color: '#5b6577' }}>%</span>
+                            <button type="button" className="btn-outline btn-small" onClick={onLaborSave}>
+                                Set
+                            </button>
+                        </div>
+                    )}
+                    {materialTotal > 0 && order.labor_percentage != null && (
+                        <p className="ts-meas-note">
+                            {peso(materialTotal)} × {Number(order.labor_percentage)}% = {peso(laborAmount)} labor
+                        </p>
+                    )}
+                </div>
+            )}
+
+            {/* WBS 1.1.5 - Payment summary: material total, labor, total amount, paid, and balance */}
+            <dl className="ts-payment">
+                <div className="ts-payment-row">
+                    <dt>Material total</dt>
+                    <dd>{peso(materialTotal)}</dd>
+                </div>
+                {laborAmount > 0 && (
+                    <div className="ts-payment-row">
+                        <dt>Labor ({Number(order.labor_percentage)}%)</dt>
+                        <dd>{peso(laborAmount)}</dd>
+                    </div>
+                )}
+                <div className="ts-payment-row">
+                    <dt>Total amount</dt>
+                    <dd>{peso(totalAmount)}</dd>
+                </div>
+                <div className="ts-payment-row">
+                    <dt>Amount paid</dt>
+                    <dd>{peso(amountPaid)}</dd>
+                </div>
+                <div className="ts-payment-row ts-balance">
+                    <dt>Remaining balance</dt>
+                    <dd>{peso(balance)}</dd>
+                </div>
+            </dl>
              {/* WBS 1.1.3 - Installation date input for ready and completed orders */}
             {canSetInstall && (
                 <div className="ts-labor-box">

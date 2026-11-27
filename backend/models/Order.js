@@ -102,3 +102,53 @@ export const recordPayment = async (id, amount) => {
         [id]
     );
 };
+
+/*WBS 1.1.5 - Recalculate material_total from items, then recompute labor and total*/
+export const recalcTotals = async (id) => {
+    // Sum all item prices (price is already the total for that line, not per unit)
+    await pool.query(
+        `UPDATE orders
+         SET material_total = (
+             SELECT COALESCE(SUM(price), 0)
+             FROM order_items WHERE order_id = ?
+         )
+         WHERE id = ?`,
+        [id, id]
+    );
+    // Recompute labor and total if labor_percentage is set
+    await pool.query(
+        `UPDATE orders
+         SET
+            labor_amount  = CASE WHEN labor_percentage IS NOT NULL
+                                 THEN ROUND(material_total * labor_percentage / 100, 2)
+                                 ELSE 0 END,
+            total_amount  = material_total +
+                            CASE WHEN labor_percentage IS NOT NULL
+                                 THEN ROUND(material_total * labor_percentage / 100, 2)
+                                 ELSE 0 END
+         WHERE id = ?`,
+        [id]
+    );
+};
+
+// WBS 1.1.5 - Set labor percentage and recompute amounts
+export const setLaborPercentage = async (id, percentage) => {
+    const [rows] = await pool.query(
+        `SELECT material_total FROM orders WHERE id = ?`, [id]
+    );
+    const materialTotal = Number(rows[0]?.material_total ?? 0);
+    const laborAmount   = Math.round(materialTotal * percentage / 100 * 100) / 100;
+    const totalAmount   = Math.round((materialTotal + laborAmount) * 100) / 100;
+
+    await pool.query(
+        `UPDATE orders
+         SET labor_percentage = ?, labor_amount = ?, total_amount = ?,
+             payment_status = CASE
+                WHEN amount_paid <= 0 THEN 'unpaid'
+                WHEN amount_paid >= ? THEN 'paid'
+                ELSE 'partial'
+             END
+         WHERE id = ?`,
+        [percentage, laborAmount, totalAmount, totalAmount, id]
+    );
+};

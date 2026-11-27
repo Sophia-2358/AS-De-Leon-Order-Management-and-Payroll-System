@@ -128,3 +128,30 @@ export const setInstallDate = async (id, install_date) => {
     if (!install_date) throw fail(400, 'Please provide a valid date.');
     await pool.query(`UPDATE orders SET install_date = ? WHERE id = ?`, [install_date, id]);
 };
+
+// WBS 1.1.5 - Validate and persist the labor percentage for an order
+export const setLabor = async (id, percentage) => {
+    const order = await orderModel.findById(id);
+    if (!order) throw fail(404, 'Order not found.');
+    if (!['canvassing','for_payment_materials'].includes(order.status)) {
+        throw fail(400, 'Labor can only be set during canvassing or payment stage.');
+    }
+    const pct = Number(percentage);
+    if (isNaN(pct) || pct < 0 || pct > 100) throw fail(400, 'Labor percentage must be between 0 and 100.');
+    await orderModel.setLaborPercentage(id, pct);
+};
+
+// ==========================================
+// SET ITEM PRICE (canvassing stage)
+// ==========================================
+// WBS 1.1.5 - Set the canvassed price on an item and recalculate the order material total
+export const setItemPrice = async (item_id, order_id, price) => {
+    const order = await orderModel.findById(order_id);
+    if (!order) throw fail(404, 'Order not found.');
+    if (!['canvassing','for_payment_materials'].includes(order.status))
+        throw fail(400, 'Prices can only be set during canvassing.');
+    const p = Number(price);
+    if (isNaN(p) || p < 0) throw fail(400, 'Price must be 0 or greater.');
+    await itemModel.updatePrice(item_id, p);
+    await orderModel.recalcTotals(order_id);
+};

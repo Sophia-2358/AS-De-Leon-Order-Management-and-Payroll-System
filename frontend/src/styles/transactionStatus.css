@@ -73,3 +73,17 @@
 .ts-page .ts-pay-form label { margin: 0; font-weight: bold; }
 .ts-page .ts-pay-form input { padding: 8px 10px; border-radius: 5px; border: 1px solid #dde2ec; }
 .ts-page .ts-pay-btns { display: flex; gap: 8px; }
+
+/* ── Payment summary ─────────────────────────────────────────
+   WBS 1.1.5 - Material total, labor, total amount, balance    */
+.ts-page .ts-payment { margin-bottom: 20px; }
+.ts-page .ts-payment-row { display: flex; justify-content: space-between; padding: 5px 0; }
+.ts-page .ts-payment-row dt { color: #5b6577; }
+.ts-page .ts-payment-row dd { margin: 0; text-align: right; }
+.ts-page .ts-balance { margin-top: 5px; padding-top: 10px; border-top: 1px solid #dde2ec; font-weight: bold; color: #17202d; }
+
+/* ── Labor percentage box ────────────────────────────────────
+   WBS 1.1.5 - Labor % input and computed labor amount         */
+.ts-page .ts-labor-box { margin-bottom: 15px; padding: 12px; border-radius: 8px; border: 1px solid #dde2ec; background: #fafbfd; }
+.ts-page .ts-labor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: .9rem; font-weight: bold; color: #17202d; }
+.ts-page .ts-labor-row { display: flex; align-items: center; gap: 8px; }
