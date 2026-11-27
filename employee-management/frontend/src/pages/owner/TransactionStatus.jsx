@@ -122,6 +122,58 @@ export default function TransactionStatus() {
             await selectOrder(selected.id)
         } catch (err) { setMsg({ text: err.message, ok: false }) }
     }
+// WBS 1.1.6 - Open the item dialog pre-filled with defaults for adding a new item
+    function openAddItem() {
+        setItemForm(EMPTY_ITEM)
+        setEditingItem(null)
+        itemDialogRef.current?.showModal()
+    }
+
+    // WBS 1.1.6 - Open the item dialog pre-filled with an existing item's data for editing
+    function openEditItem(item) {
+        setItemForm({
+            product:  item.product,
+            width:    item.width,
+            height:   item.height,
+            unit:     item.unit,
+            quantity: item.quantity,
+            material: item.material || '',
+            notes:    item.notes    || ''
+        })
+        setEditingItem(item.id)
+        itemDialogRef.current?.showModal()
+    }
+
+    // WBS 1.1.6 - Update a single field in the item form state
+    function handleItemChange(field, value) {
+        setItemForm(prev => ({ ...prev, [field]: value }))
+    }
+
+    // WBS 1.1.6 - Submit the item dialog form to add or update a measurement item
+    async function handleSaveItem(e) {
+        e.preventDefault()
+        try {
+            if (editingItem) {
+                await api(`/api/orders/${selected.id}/items/${editingItem}`, { method: 'PUT', body: itemForm })
+            } else {
+                await api(`/api/orders/${selected.id}/items`, { method: 'POST', body: itemForm })
+            }
+            itemDialogRef.current?.close()
+            await selectOrder(selected.id)
+        } catch (err) { setMsg({ text: err.message, ok: false }) }
+    }
+
+    // WBS 1.1.6 - Delete the currently selected measurement item
+    async function handleDeleteItem() {
+        try {
+            await api(`/api/orders/${selected.id}/items/${editingItem}`, { method: 'DELETE' })
+            itemDialogRef.current?.close()
+            await selectOrder(selected.id)
+        } catch (err) { setMsg({ text: err.message, ok: false }) }
+    }
+
+    const canEditItems = selected && ['approved','measuring','canvassing'].includes(selected.status)
+    const canPrice     = selected && ['canvassing','for_payment_materials'].includes(selected.status)
 
 
     return (
@@ -176,8 +228,18 @@ export default function TransactionStatus() {
                     )}
                 </div>
             </div>
-                            
+               {/* WBS 1.1.6 - Render the measurement item add/edit dialog */}
+            <TsItemDialog
+                ref={itemDialogRef}
+                form={itemForm}
+                editingId={editingItem}
+                readOnly={!canEditItems}
+                onChange={handleItemChange}
+                onSave={handleSaveItem}
+                onDelete={handleDeleteItem}
+                onCancel={() => itemDialogRef.current?.close()}
+            />
         </OwnerLayout>
     )
 }
-
+ 

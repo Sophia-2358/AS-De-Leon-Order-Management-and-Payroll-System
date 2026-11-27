@@ -73,6 +73,17 @@ export const setLabor      = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Labor percentage set.' });
     } catch (e) { return sendError(res, 'Set Labor', e, 'Could not set labor percentage.'); }
 };
+// WBS 1.1.6 - Add a new measurement item to an order
+export const addItem       = async (req, res) => {
+    try { const id = await orderService.addItem(Number(req.params.id), req.body); return res.status(201).json({ success: true, message: 'Item added.', data: { id } }); }
+    catch (e) { return sendError(res, 'Add Item', e, 'Could not add item.'); }
+};
+
+// WBS 1.1.6 - Edit the dimensions and details of an existing measurement item
+export const editItem      = async (req, res) => {
+    try { await orderService.editItem(Number(req.params.item_id), Number(req.params.id), req.body); return res.status(200).json({ success: true, message: 'Item updated.' }); }
+    catch (e) { return sendError(res, 'Edit Item', e, 'Could not update item.'); }
+};
 
 // WBS 1.1.5 - Set the canvassed price for a specific measurement item
 export const setItemPrice  = async (req, res) => {
@@ -80,5 +91,10 @@ export const setItemPrice  = async (req, res) => {
         await orderService.setItemPrice(Number(req.params.item_id), Number(req.params.id), req.body.price);
         return res.status(200).json({ success: true, message: 'Item price updated.' });
     } catch (e) { return sendError(res, 'Set Item Price', e, 'Could not update item price.'); }
+};
+// WBS 1.1.6 - Delete a measurement item from an order
+export const deleteItem    = async (req, res) => {
+    try { await orderService.deleteItem(Number(req.params.item_id), Number(req.params.id)); return res.status(200).json({ success: true, message: 'Item deleted.' }); }
+    catch (e) { return sendError(res, 'Delete Item', e, 'Could not delete item.'); }
 };
 

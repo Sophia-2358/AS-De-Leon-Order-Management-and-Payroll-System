@@ -16,7 +16,9 @@ router.post('/:id/approve',              approveOrder);
 router.post('/:id/next-status',          nextStatus);
 router.post('/:id/payment',              recordPayment);
 router.post('/:id/labor',                setLabor);
+router.post('/:id/items',                addItem);
+router.put('/:id/items/:item_id',        editItem);
 router.post('/:id/install-date',         setInstallDate);
-
+router.delete('/:id/items/:item_id',     deleteItem);
 
 export default router;

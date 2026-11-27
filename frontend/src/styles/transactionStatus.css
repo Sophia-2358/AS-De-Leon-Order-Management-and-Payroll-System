@@ -87,3 +87,25 @@
 .ts-page .ts-labor-box { margin-bottom: 15px; padding: 12px; border-radius: 8px; border: 1px solid #dde2ec; background: #fafbfd; }
 .ts-page .ts-labor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: .9rem; font-weight: bold; color: #17202d; }
 .ts-page .ts-labor-row { display: flex; align-items: center; gap: 8px; }
+
+/* ── Item dialog (Edit / View item) ─────────────────────────
+   WBS 1.1.6 - Dialog for recording/viewing item measurements  */
+.ts-dialog { width: min(560px,92vw); padding: 20px; border-radius: 10px; border: 1px solid #dde2ec; box-shadow: 0 10px 30px rgba(8,8,8,.25); color: #17202d; background: #fff; }
+.ts-dialog::backdrop { background: rgba(8,8,8,.45); }
+.ts-dialog h2 { margin: 0 0 4px; font-size: 1.4rem; font-weight: bold; }
+.ts-dialog .ts-dnote { font-size: .85rem; color: #5b6577; }
+.ts-dialog .ts-dform { display: grid; gap: 12px; }
+.ts-dialog .ts-dgrid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ts-dialog .ts-dgrid4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.ts-dialog .ts-dfield { display: flex; flex-direction: column; gap: 4px; }
+.ts-dialog .ts-dfield label { margin: 0; font-weight: bold; }
+.ts-dialog .ts-dfield input, .ts-dialog .ts-dfield select, .ts-dialog .ts-dfield textarea { width: 100%; padding: 8px 10px; font-size: 1rem; font-family: inherit; border-radius: 5px; border: 1px solid #dde2ec; color: #17202d; background: #fff; }
+.ts-dialog .ts-dfield textarea { resize: vertical; }
+.ts-dialog .ts-dfield input[readOnly], .ts-dialog .ts-dfield textarea[readOnly] { background: #f1f3fb; }
+.ts-dialog .ts-dbtns { display: flex; align-items: center; gap: 10px; margin-top: 5px; padding-top: 15px; border-top: 1px solid #dde2ec; }
+.ts-dialog .ts-dactions { display: flex; gap: 10px; margin-left: auto; }
+
+/* ── Responsive ──────────────────────────────────────────────  */
+@media (max-width: 1000px) { .ts-page .ts-body { grid-template-columns: 1fr; } }
+@media (max-width: 900px)  { .ts-page { padding: 15px; } }
+@media (max-width: 600px)  { .ts-dialog .ts-dgrid2 { grid-template-columns: 1fr; } .ts-dialog .ts-dgrid4 { grid-template-columns: 1fr 1fr; } }
