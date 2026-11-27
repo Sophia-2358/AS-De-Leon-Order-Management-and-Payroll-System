@@ -15,6 +15,7 @@ router.post('/',                         createOrder);
 router.post('/:id/approve',              approveOrder);
 router.post('/:id/next-status',          nextStatus);
 router.post('/:id/payment',              recordPayment);
+router.post('/:id/labor',                setLabor);
 router.post('/:id/install-date',         setInstallDate);
 
 

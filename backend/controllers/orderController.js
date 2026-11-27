@@ -66,4 +66,19 @@ export const setInstallDate = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Installation date set.' });
     } catch (e) { return sendError(res, 'Set Install Date', e, 'Could not set installation date.'); }
 };
+// WBS 1.1.5 - Set the labor percentage and trigger total amount recomputation
+export const setLabor      = async (req, res) => {
+    try {
+        await orderService.setLabor(Number(req.params.id), req.body.percentage);
+        return res.status(200).json({ success: true, message: 'Labor percentage set.' });
+    } catch (e) { return sendError(res, 'Set Labor', e, 'Could not set labor percentage.'); }
+};
+
+// WBS 1.1.5 - Set the canvassed price for a specific measurement item
+export const setItemPrice  = async (req, res) => {
+    try {
+        await orderService.setItemPrice(Number(req.params.item_id), Number(req.params.id), req.body.price);
+        return res.status(200).json({ success: true, message: 'Item price updated.' });
+    } catch (e) { return sendError(res, 'Set Item Price', e, 'Could not update item price.'); }
+};
 
