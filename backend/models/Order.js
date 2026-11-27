@@ -65,3 +65,20 @@ export const findById = async (id) => {
     );
     return rows[0] ?? null;
 };
+
+// WBS 1.1.3 - Count active (non-completed, non-declined) orders for capacity enforcement
+export const countActive = async () => {
+    const [rows] = await pool.query(
+        `SELECT COUNT(*) AS cnt FROM orders WHERE status NOT IN ('completed','declined')`
+    );
+    return Number(rows[0].cnt);
+};
+
+// WBS 1.1.3 - Update the status (and optional decline reason) of an order
+export const updateStatus = async (id, status, decline_reason = null) => {
+    const [result] = await pool.query(
+        `UPDATE orders SET status = ?, decline_reason = ? WHERE id = ?`,
+        [status, decline_reason, id]
+    );
+    return result.affectedRows;
+};
