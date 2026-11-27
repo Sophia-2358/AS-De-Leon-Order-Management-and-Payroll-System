@@ -94,7 +94,20 @@ return (
                 </div>
             )}
         
-        
+           {/* WBS 1.1.4 - Payment amount form for recording a new payment */}
+            {showPayForm && (
+                <form className="ts-pay-form" onSubmit={onRecordPayment}>
+                    <label htmlFor="paymentAmount">Amount received (₱)</label>
+                    <input id="paymentAmount" type="number" min="0.01" step="0.01"
+                           value={payAmt} onChange={e => onPayAmtChange(e.target.value)}
+                           required autoFocus />
+                    <div className="ts-pay-btns">
+                        <button type="submit" className="btn-primary">Save payment</button>
+                        <button type="button" className="btn-outline"
+                                onClick={() => onShowPayForm(false)}>Cancel</button>
+                    </div>
+                </form>
+            )}
         
        /* WBS 1.1.2 / 1.1.3 - Confirmation and error message banner */
             {msg.text && (

@@ -10,6 +10,7 @@ import attendanceRoutes      from './routes/attendanceRoutes.js';
 import payrollRoutes         from './routes/payrollRoutes.js';
 import attendanceScanRoutes  from './routes/attendanceScanRoutes.js';
 import payrollRecordRoutes   from './routes/payrollRecordRoutes.js';
+import orderRoutes       from './routes//orderRoutes.js';
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use('/api/attendance',      attendanceRoutes);
 app.use('/api/payroll',         payrollRoutes);
 app.use('/api/attendance-scan', attendanceScanRoutes);
 app.use('/api/payroll-records', payrollRecordRoutes);
+app.use('/api/orders',           orderRoutes);
 
 // ==========================================
 // DATABASE TEST
