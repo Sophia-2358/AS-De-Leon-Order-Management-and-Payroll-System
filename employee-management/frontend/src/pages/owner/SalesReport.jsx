@@ -13,6 +13,10 @@ async function api(url) {
     if (!res.ok || data.success === false) throw new Error(data.message || 'Something went wrong.')
     return data
 }
+    // WBS 1.2.4 - Format a number as Philippine Peso currency
+function peso(n) {
+    return '₱' + Number(n || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
 
 // WBS 1.2.1 - Root page component that orchestrates filter, summary, chart, table, and export
 export default function SalesReport() {
@@ -57,6 +61,28 @@ export default function SalesReport() {
         doc.text(`Orders in Period:    ${result.summary.order_count}`, 14, 63)
         doc.text(`Average Order Value: ${peso(result.summary.avg_order)}`, 14, 69)
 
+         // WBS 1.2.4 - Write the orders table with a totals footer row
+        doc.setFontSize(11)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Orders Included', 14, 80)
+
+        autoTable(doc, {
+            startY: 84,
+            head: [['Order No.', 'Customer', 'Product', 'Amount']],
+            body: result.orders.map(o => [
+                o.order_no,
+                o.customer_name,
+                o.product || '—',
+                peso(o.total_amount)
+            ]),
+            foot: [['', '', 'Total', peso(result.summary.total_sales)]],
+            headStyles:  { fillColor: [40, 48, 192], textColor: 255, fontStyle: 'bold' },
+            footStyles:  { fillColor: [240, 242, 251], textColor: [23, 32, 51], fontStyle: 'bold' },
+            alternateRowStyles: { fillColor: [248, 249, 253] },
+            styles: { fontSize: 9, cellPadding: 4 },
+            columnStyles: { 3: { halign: 'right' } }
+        })
+
     return (
         <OwnerLayout active="sales-reports">
             <div className="sr-page">
@@ -75,6 +101,12 @@ export default function SalesReport() {
                 {/* WBS 1.2.3 - Monthly sales bar chart */}
                     <SrBarChart monthly={result?.monthly ?? []} />
 
+                    
+                {/* WBS 1.2.4 - Order list table with totals footer */}
+                    <SrOrdersTable
+                        orders={result?.orders ?? []}
+                        totalSales={result?.summary?.total_sales ?? 0}
+                         />
                 </div>
             </div>
         </OwnerLayout>
