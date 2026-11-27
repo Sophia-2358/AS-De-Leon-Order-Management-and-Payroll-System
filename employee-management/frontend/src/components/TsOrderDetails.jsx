@@ -6,4 +6,3 @@ export default function TsOrderDetails({
     onApprove, onNextStatus, onRecordPayment
 }) 
 {}
-            {msg.text && <p className={`ts-msg ${msg.ok ? 'ok' : 'error'}`}>{msg.text}</p>}
