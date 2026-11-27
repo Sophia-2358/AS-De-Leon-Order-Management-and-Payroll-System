@@ -47,7 +47,17 @@ export default function SalesReport() {
             setLoading(false)
         }
     }
+ // WBS 1.2.2 - Write summary section: total sales, order count, average order value
+        doc.setFontSize(11)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Summary', 14, 50)
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(10)
+        doc.text(`Total Sales:         ${peso(result.summary.total_sales)}`, 14, 57)
+        doc.text(`Orders in Period:    ${result.summary.order_count}`, 14, 63)
+        doc.text(`Average Order Value: ${peso(result.summary.avg_order)}`, 14, 69)
 
+    return (
         <OwnerLayout active="sales-reports">
             <div className="sr-page">
                 <div className="sr-header">
@@ -60,9 +70,11 @@ export default function SalesReport() {
                     form={form} msg={msg} loading={loading}
                     onChange={handleChange} onSubmit={handleSubmit}
                 />
-                          
+                 {/* WBS 1.2.2 - Summary cards: total sales, order count, average order value */}
+                <SrSummaryCards summary={result?.summary ?? null} />
+
                 </div>
             </div>
         </OwnerLayout>
-    
+    )
 }

@@ -13,6 +13,7 @@ import ScanAttendance  from './pages/owner/ScanAttendance'
 import OwnerAttendance from './pages/owner/Attendance'
 import EmployeePayroll from './pages/owner/EmployeePayroll'
 import TransactionStatus  from './pages/owner/TransactionStatus'
+import SalesReport        from './pages/owner/SalesReport'
 
 export default function App() {
     return (
@@ -31,6 +32,7 @@ export default function App() {
                 <Route path="/owner/attendance"          element={<OwnerAttendance />} />
                 <Route path="/owner/employee-payroll"    element={<EmployeePayroll />} />
                 <Route path="/owner/transaction-status"  element={<TransactionStatus />} />
+                <Route path="/owner/sales-reports"       element={<SalesReport />} />
                 <Route path="*"                          element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>
