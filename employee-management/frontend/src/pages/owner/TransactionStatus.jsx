@@ -66,6 +66,32 @@ export default function TransactionStatus() {
             setInstallDate('')
         } catch (err) { setMsg({ text: err.message, ok: false }) }
     }
+// WBS 1.1.3 - Send an approve request for the selected order
+    async function handleApprove() {
+        try {
+            await api(`/api/orders/${selected.id}/approve`, { method: 'POST' })
+            setMsg({ text: 'Order approved.', ok: true })
+            await selectOrder(selected.id); loadOrders()
+        } catch (err) { setMsg({ text: err.message, ok: false }) }
+    }
+
+    // WBS 1.1.3 - Advance the selected order to the next workflow status
+    async function handleNextStatus() {
+        try {
+            const data = await api(`/api/orders/${selected.id}/next-status`, { method: 'POST' })
+            setMsg({ text: `Status updated to: ${STEP_LABELS[data.status]}.`, ok: true })
+            await selectOrder(selected.id); loadOrders()
+        } catch (err) { setMsg({ text: err.message, ok: false }) }
+    }
+      // WBS 1.1.3 - Save the installation date for the selected order
+    async function handleInstallDateSave() {
+        try {
+            await api(`/api/orders/${selected.id}/install-date`, { method: 'POST', body: { install_date: installDate } })
+            setMsg({ text: 'Installation date saved.', ok: true })
+            await selectOrder(selected.id)
+            setInstallDate('')
+        } catch (err) { setMsg({ text: err.message, ok: false }) }
+    }
 
 
     return (

@@ -37,3 +37,28 @@ export const getOrderById  = async (req, res) => {
     catch (e) { return sendError(res, 'Get Order', e, 'Could not retrieve order.'); }
 };
 
+// WBS 1.1.3 - Approve an order and advance it from for_approval to approved
+export const approveOrder  = async (req, res) => {
+    try { await orderService.approveOrder(Number(req.params.id)); return res.status(200).json({ success: true, message: 'Order approved.' }); }
+    catch (e) { return sendError(res, 'Approve Order', e, 'Could not approve order.'); }
+};
+
+// WBS 1.1.3 - Decline an order and set its status to declined
+export const declineOrder  = async (req, res) => {
+    try { await orderService.declineOrder(Number(req.params.id)); return res.status(200).json({ success: true, message: 'Order declined.' }); }
+    catch (e) { return sendError(res, 'Decline Order', e, 'Could not decline order.'); }
+};// WBS 1.1.3 - Advance an order to its next workflow status step
+export const nextStatus    = async (req, res) => {
+    try {
+        const next = await orderService.updateOrderStatus(Number(req.params.id));
+        return res.status(200).json({ success: true, message: `Status updated to ${next}.`, status: next });
+    } catch (e) { return sendError(res, 'Update Status', e, 'Could not update status.'); }
+};
+// WBS 1.1.3 - Set the installation date for a ready or completed order
+export const setInstallDate = async (req, res) => {
+    try {
+        await orderService.setInstallDate(Number(req.params.id), req.body.install_date);
+        return res.status(200).json({ success: true, message: 'Installation date set.' });
+    } catch (e) { return sendError(res, 'Set Install Date', e, 'Could not set installation date.'); }
+};
+

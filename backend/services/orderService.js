@@ -42,3 +42,74 @@ export const fetchOrderById = async (id) => {
     const activeCount = await orderModel.countActive();
     return { ...order, items, payments, active_count: activeCount, capacity_limit: CAPACITY_LIMIT };
 };
+// ==========================================
+// APPROVE / DECLINE
+// ==========================================
+// WBS 1.1.3 - Approve an order, enforce capacity limit, and seed the first measurement item
+export const approveOrder = async (id) => {
+    const order = await orderModel.findById(id);
+    if (!order) throw fail(404, 'Order not found.');
+    if (order.status !== 'for_approval') throw fail(400, 'Only orders awaiting approval can be approved.');
+    const active = await orderModel.countActive();
+    if (active >= CAPACITY_LIMIT) throw fail(400, 'Capacity limit reached. Cannot approve more orders.');
+    await orderModel.updateStatus(id, 'approved');
+
+    // Auto-insert the order's product as the first measurement item
+    if (order.product) {
+        await itemModel.insert({
+            order_id: id,
+            product:  order.product,
+            width:    0,
+            height:   0,
+            unit:     'ft',
+            quantity: 1,
+            material: null,
+            notes:    null,
+            price:    0
+        });
+    }
+};
+
+// ==========================================
+// UPDATE STATUS (advance to next step)
+// ==========================================
+// WBS 1.1.3 - Advance the order through workflow steps, enforcing stage-specific business rules
+export const updateOrderStatus = async (id) => {
+    const order = await orderModel.findById(id);
+    if (!order) throw fail(404, 'Order not found.');
+    const idx = ORDER_STEPS.indexOf(order.status);
+    if (idx === -1 || order.status === 'completed') throw fail(400, 'This order cannot be advanced further.');
+    if (order.status === 'for_approval') throw fail(400, 'Approve or decline the order first.');
+    // Before moving from canvassing to for_payment_materials, all items must have a price
+    if (order.status === 'canvassing') {
+        const items = await itemModel.fetchByOrderId(id);
+        if (items.length === 0) throw fail(400, 'Add at least one item before proceeding.');
+        const unpriced = items.filter(i => Number(i.price) <= 0);
+        if (unpriced.length > 0) throw fail(400, 'All items must have a price before proceeding.');
+    }
+    // Before moving from for_payment_materials, labor % must be set and materials must be paid
+    if (order.status === 'for_payment_materials') {
+        if (!order.labor_percentage) throw fail(400, 'Set the labor percentage before proceeding.');
+        if (Number(order.amount_paid) < Number(order.material_total)) {
+            throw fail(400, 'Materials must be fully paid before proceeding to fabrication.');
+        }
+    }
+    // Before completing, the full total (materials + labor) must be paid
+    if (order.status === 'ready') {
+        if (Number(order.amount_paid) < Number(order.total_amount)) {
+            throw fail(400, 'The remaining balance must be fully paid before completing the order.');
+        }
+    }
+    const next = ORDER_STEPS[idx + 1];
+    await orderModel.updateStatus(id, next);
+    return next;
+};
+// WBS 1.1.3 - Set the installation date for an order that is ready or completed
+export const setInstallDate = async (id, install_date) => {
+    const order = await orderModel.findById(id);
+    if (!order) throw fail(404, 'Order not found.');
+    if (!['ready','completed'].includes(order.status))
+        throw fail(400, 'Installation date can only be set when the order is ready for installation.');
+    if (!install_date) throw fail(400, 'Please provide a valid date.');
+    await pool.query(`UPDATE orders SET install_date = ? WHERE id = ?`, [install_date, id]);
+};
