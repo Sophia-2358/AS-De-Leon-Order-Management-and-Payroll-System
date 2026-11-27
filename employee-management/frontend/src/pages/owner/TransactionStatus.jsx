@@ -55,12 +55,74 @@ export default function TransactionStatus() {
     }, [])
 
     useEffect(() => { loadOrders() }, [loadOrders])
+    // WBS 1.1.2 - Fetch and display the full details for the selected order
+    async function selectOrder(id) {
+        try {
+            const data = await api(`/api/orders/${id}`)
+            setSelected(data.data)
+            setMsg({ text: '', ok: true })
+            setShowPayForm(false)
+            setLaborInput(data.data.labor_percentage != null ? String(data.data.labor_percentage) : '')
+            setInstallDate('')
+        } catch (err) { setMsg({ text: err.message, ok: false }) }
+    }
 
-}
+
+    return (
+    <OwnerLayout active="transaction-status">
+            <div className="ts-page">
+                <div className="ts-header">
+                    <div>
+                        <h1>Transaction status</h1>
+                        <p>Approve new orders, then track their progress, measurements, and payments</p>
+                    </div>
+                </div>
+
+                <div className="ts-content">
 
                     <TsOrderList
                         orders={orders}
                         selectedId={selected?.id}
                         onSelect={selectOrder}
                     />
+                    {selected && (
+                        <div className="ts-card">
+                            <p className="ts-panel-label">Transaction details</p>
+                            <h2 className="ts-detail-name">{selected.customer_name}</h2>
+                            {/* WBS 1.1.2 - Display order metadata in the details panel */}
+                            <dl className="ts-info">
+                                <div><dt>Order no.</dt>    <dd>{selected.order_no}</dd></div>
+                                <div><dt>Product</dt>      <dd>{selected.product || '—'}</dd></div>
+                                <div><dt>Contact no.</dt>  <dd>{selected.contact_no   || '—'}</dd></div>
+                                <div><dt>Site address</dt> <dd>{selected.site_address  || '—'}</dd></div>
+                            </dl>
+                            {selected.message && <p className="ts-message">{selected.message}</p>}
+
+                            {/* WBS 1.1.2 - Render the progress stepper, payment summary, and action buttons */}
+                            <TsOrderDetails
+                                order={selected}
+                                msg={msg}
+                                showPayForm={showPayForm}
+                                payAmt={payAmt}
+                                laborInput={laborInput}
+                                onLaborChange={setLaborInput}
+                                onLaborSave={handleLaborSave}
+                                installDate={installDate}
+                                onInstallDateChange={setInstallDate}
+                                onInstallDateSave={handleInstallDateSave}
+                                onPayAmtChange={setPayAmt}
+                                onShowPayForm={setShowPayForm}
+                                onApprove={handleApprove}
+                                onNextStatus={handleNextStatus}
+                                onRecordPayment={handleRecordPayment}
+                            />
+                        </div>
+                    )}
+                </div>
+            </div>
+                            
+
+        </OwnerLayout>
+    )
+}
 
