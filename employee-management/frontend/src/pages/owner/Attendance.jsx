@@ -1,3 +1,5 @@
+﻿// WBS 2.2.2 - Attendance Summary and Status
+// WBS 2.2.1 - Daily Attendance View
 // WBS 2.2.1 - Daily Attendance View
 // WBS 2.2.2 - Attendance Summary and Status
 import { useEffect, useMemo, useState } from 'react'
@@ -43,9 +45,9 @@ function toDateKey(value) {
 
 // Turns a date/time from the backend into '7:58 AM'. Empty values show a dash.
 function formatClock(value) {
-    if (!value) return '—'
+    if (!value) return 'â€”'
     const d = new Date(value)
-    if (Number.isNaN(d.getTime())) return '—'
+    if (Number.isNaN(d.getTime())) return 'â€”'
     const h = d.getHours()
     const m = String(d.getMinutes()).padStart(2, '0')
     return `${((h + 11) % 12) + 1}:${m} ${h < 12 ? 'AM' : 'PM'}`

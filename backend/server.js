@@ -4,12 +4,12 @@ import cors from 'cors';
 import session from 'express-session';
 import pool from './db.js';
 
-import authRoutes       from './routes/authRoutes.js';
-import employeeRoutes   from './routes/employeeRoutes.js';
-import attendanceRoutes from './routes/attendanceRoutes.js';
-import payrollRoutes    from './routes/payrollRoutes.js';
-import attendanceScanRoutes  from '../employee-management/backend/routes/attendanceScanRoutes.js';
-import payrollRecordRoutes   from '../employee-management/backend/routes/payrollRecordRoutes.js';
+import authRoutes            from './routes/authRoutes.js';
+import employeeRoutes        from './routes/employeeRoutes.js';
+import attendanceRoutes      from './routes/attendanceRoutes.js';
+import payrollRoutes         from './routes/payrollRoutes.js';
+import attendanceScanRoutes  from './routes/attendanceScanRoutes.js';
+import payrollRecordRoutes   from './routes/payrollRecordRoutes.js';
 
 const app = express();
 

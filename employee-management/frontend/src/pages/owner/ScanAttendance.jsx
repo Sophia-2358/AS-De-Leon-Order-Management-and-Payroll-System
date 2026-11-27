@@ -1,3 +1,4 @@
+﻿// WBS 2.1.3 - Manual ID Entry and Undo Scan
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Html5QrcodeScanner } from 'html5-qrcode'
 import OwnerLayout  from '../../components/OwnerLayout'
@@ -40,9 +41,9 @@ function toDateKey(value) {
 
 // Turns a date/time from the backend into '7:58 AM'. Empty values show a dash.
 function formatClock(value) {
-    if (!value) return '—'
+    if (!value) return 'â€”'
     const d = new Date(value)
-    if (Number.isNaN(d.getTime())) return '—'
+    if (Number.isNaN(d.getTime())) return 'â€”'
     const h = d.getHours()
     const m = String(d.getMinutes()).padStart(2, '0')
     return `${((h + 11) % 12) + 1}:${m} ${h < 12 ? 'AM' : 'PM'}`
@@ -57,10 +58,10 @@ const MODES = [
 export default function ScanAttendance() {
     const [mode, setMode]         = useState('auto')   // auto, in, or out
     const [msg, setMsg]           = useState(null)
-    const [last, setLast]         = useState(null)     // last recorded scan (for the card)
+    const [last, setLast]         = useState(null)     // last recorded scan (for the card and Undo)
     const [events, setEvents]     = useState([])       // today's time ins and time outs
-    const [showId, setShowId]     = useState(false)    // WBS 2.1.3 - toggle Enter ID form
-    const [code, setCode]         = useState('')       // WBS 2.1.3 - typed employee ID
+    const [showId, setShowId]     = useState(false)
+    const [code, setCode]         = useState('')
 
     const modeRef       = useRef('auto')
     const lastResultRef = useRef(null)   // the last QR text that was read
@@ -140,7 +141,7 @@ export default function ScanAttendance() {
         setMode(key)
     }
 
-    // WBS 2.1.3 - undo the last recorded scan
+    // Undo the last recorded scan.
     async function handleUndo() {
         if (!last) return
         try {
@@ -156,7 +157,7 @@ export default function ScanAttendance() {
         }
     }
 
-    // WBS 2.1.3 - record a scan using a typed employee ID
+    // Type the employee ID when the camera cannot be used.
     function handleIdSubmit(e) {
         e.preventDefault()
         const value = code.trim()
@@ -193,7 +194,6 @@ export default function ScanAttendance() {
                     <div id="qr-reader"></div>
                     <p className="em-muted">Point the camera at the employee's QR code and hold it inside the frame. It records automatically.</p>
 
-                    {/* WBS 2.1.3 - Enter ID instead of scanning */}
                     <button type="button" className="em-light" onClick={() => setShowId(v => !v)}>
                         Enter ID instead
                     </button>
@@ -218,11 +218,11 @@ export default function ScanAttendance() {
                         ) : (
                             <div>
                                 <div className="em-who">
-                                    <div className="em-check">✓</div>
+                                    <div className="em-check">âœ“</div>
                                     <div>
                                         <div className="em-name">{last.employee.full_name}</div>
                                         <div className="em-muted">
-                                            {last.employee.position} · {last.employee.employee_code}
+                                            {last.employee.position} Â· {last.employee.employee_code}
                                         </div>
                                     </div>
                                 </div>
@@ -231,13 +231,12 @@ export default function ScanAttendance() {
                                         {last.type === 'in' ? 'Timed in' : 'Timed out'}
                                     </OwnerPill>{' '}
                                     <strong>
-                                        {formatClock(last.time)} ·{' '}
+                                        {formatClock(last.time)} Â·{' '}
                                         {last.type === 'in'
                                             ? (last.status === 'late' ? 'Late' : 'On time')
                                             : `${Number(last.hours).toFixed(1)} hours`}
                                     </strong>
                                 </p>
-                                {/* WBS 2.1.3 - undo button */}
                                 <button type="button" className="em-light" onClick={handleUndo}>Undo</button>
                             </div>
                         )}

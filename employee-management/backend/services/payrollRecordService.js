@@ -1,3 +1,4 @@
+﻿// WBS 2.4.1 - Payroll Records View
 import * as payrollRecordModel from '../models/PayrollRecord.js';
 
 const fail = (status, message) => Object.assign(new Error(message), { status });
