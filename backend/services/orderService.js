@@ -1,4 +1,4 @@
-import * as orderModel from '../../../models/transaction-status/1.1.1-transaction-list/Order.js';
+import * as orderModel from '../../models/transaction-status/Order.js';
 import pool from '../../../db.js';
 
 export const fetchAllOrders = async () => await orderModel.fetchAll();

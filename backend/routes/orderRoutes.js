@@ -4,7 +4,7 @@ import {
     approveOrder, declineOrder, nextStatus,
     recordPayment, setLabor, setInstallDate,
     addItem, editItem, setItemPrice, deleteItem
-} from '../../../controllers/transaction-status/1.1.1-transaction-list/orderController.js';
+}  from '../../controllers/transaction-status/orderController.js';
 
 const router = express.Router();
 

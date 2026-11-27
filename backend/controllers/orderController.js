@@ -1,4 +1,4 @@
-import * as orderService from '../../../services/transaction-status/1.1.1-transaction-list/orderService.js';
+import * as orderService from '../../services/transaction-status/orderService.js';
 
 const sendError = (res, label, error, fallback) => {
     console.error(`${label}:`, error);
