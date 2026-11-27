@@ -10,3 +10,18 @@ export const generateReport = async (date_from, date_to, product) => {
     const orders      = await orderModel.fetchForReport(date_from, date_to, product || null);
 };
 
+// WBS 1.2.2 - Aggregate total sales, order count, and average order value
+    const total_sales = orders.reduce((sum, o) => sum + Number(o.total_amount), 0);
+    const order_count = orders.length;
+    const avg_order   = order_count > 0 ? total_sales / order_count : 0;
+ 
+
+    return {
+        // WBS 1.2.2 - Return the computed summary metrics
+        summary: {
+            total_sales:  parseFloat(total_sales.toFixed(2)),
+            order_count,
+            avg_order:    parseFloat(avg_order.toFixed(2))
+        },
+
+    }   

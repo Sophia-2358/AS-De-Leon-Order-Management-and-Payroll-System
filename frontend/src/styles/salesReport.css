@@ -5,3 +5,9 @@
 .sr-page .sr-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
 .sr-page .sr-header h1 { margin: 0; font-size: 2rem; font-weight: bold; color: #17202d; }
 .sr-page .sr-header p  { margin: 4px 0 0; font-weight: 300; color: #5b6577; }
+/* ── Summary cards ───────────────────────────────────────────
+   WBS 1.2.2 - Total sales, order count, average order value   */
+.sr-page .sr-summary { display: grid; grid-template-columns: repeat(3,1fr); gap: 15px; }
+.sr-page .sr-card { padding: 20px; border-radius: 10px; border: 1px solid #dde2ec; box-shadow: 2px 2px 8px rgba(8,8,8,.15); background: #fff; }
+.sr-page .sr-card-label { color: #5b6577; }
+.sr-page .sr-card-value { display: block; margin-top: 10px; font-size: 2rem; font-weight: bold; color: #17202d; }
